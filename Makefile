@@ -18,4 +18,7 @@ test: prepare build
 deploy:
 	ibmcloud cf push
 
+go.list:
+	go list -json -m all > go.list
+
 .PHONY: install prepare build test
