@@ -12,10 +12,19 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func UploadFiles(c echo.Context) error {
+type FileHandler struct {
+	fileService interface{}
+}
+
+func NewFileHandler() *FileHandler {
+	return &FileHandler{
+		fileService: nil,
+	}
+}
+func (f *FileHandler) UploadFiles(c echo.Context) error {
 	return c.Render(http.StatusOK, "upload.html", map[string]interface{}{"router": "upload"})
 }
-func ApiUpload(c echo.Context) error {
+func (f *FileHandler) ApiUpload(c echo.Context) error {
 	// Multipart form
 	form, err := c.MultipartForm()
 	if err != nil {
