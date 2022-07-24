@@ -15,4 +15,7 @@ build: prepare
 test: prepare build
 	echo "no tests"
 
+deploy:
+	ibmcloud cf push
+
 .PHONY: install prepare build test

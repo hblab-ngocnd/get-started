@@ -13,7 +13,7 @@ import (
 )
 
 func UploadFiles(c echo.Context) error {
-	return c.File("./static/upload.html")
+	return c.Render(http.StatusOK, "upload.html", nil)
 }
 func ApiUpload(c echo.Context) error {
 	// Multipart form
