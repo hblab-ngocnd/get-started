@@ -25,8 +25,7 @@ func ApiUpload(c echo.Context) error {
 	for _, file := range form.File["files"] {
 		src, err := file.Open()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
-			return err
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		}
 		defer src.Close()
 		// Destination

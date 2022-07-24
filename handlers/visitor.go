@@ -18,8 +18,11 @@ type alldocsResult struct {
 func CreateVisitor(c echo.Context) error {
 	var visitor models.Visitor
 	if c.Bind(&visitor) == nil {
-		infrastructure.GetDB().Post(visitor)
-		c.String(200, "Hello "+visitor.Name)
+		_, _, err := infrastructure.GetDB().Post(visitor)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		}
+		return c.String(200, "Hello "+visitor.Name)
 	}
 	return nil
 }
