@@ -13,7 +13,7 @@ import (
 )
 
 func UploadFiles(c echo.Context) error {
-	return c.Render(http.StatusOK, "upload.html", nil)
+	return c.Render(http.StatusOK, "upload.html", map[string]interface{}{"router": "upload"})
 }
 func ApiUpload(c echo.Context) error {
 	// Multipart form

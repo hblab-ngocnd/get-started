@@ -47,7 +47,7 @@ func main() {
 	}
 	e.Static("/static", "./static")
 	e.GET("/", func(c echo.Context) error {
-		return c.Render(http.StatusOK, "home.html", nil)
+		return c.Render(http.StatusOK, "home.html", map[string]interface{}{"router": "home"})
 	})
 	e.GET("/upload", handlers.UploadFiles)
 	e.POST("/api/visitors", handlers.CreateVisitor)
