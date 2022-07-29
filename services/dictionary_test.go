@@ -12,7 +12,7 @@ func TestDictionaryService_GetDictionary(t *testing.T) {
 	InitTest()
 	BucketSize = 2
 	ctx := context.Background()
-	data, err := NewDictionary().GetDictionary(ctx, "https://japanesetest4you.com/jlpt-n1-vocabulary-list/")
+	data, err := NewDictionary().GetDictionary(ctx, "https://japanesetest4you.com/jlpt-n2-vocabulary-list/")
 	fmt.Printf("%+v", data)
 	assert.Equal(t, nil, err)
 }
