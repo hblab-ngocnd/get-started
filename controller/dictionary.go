@@ -32,15 +32,17 @@ func (f *dictHandler) Dict(c echo.Context) error {
 func (f *dictHandler) ApiDict(c echo.Context) error {
 	notCache := c.QueryParam("not_cache")
 	if notCache != "true" && f.cacheData != nil {
+		f.mu.Lock()
+		defer f.mu.Unlock()
 		return c.JSON(http.StatusOK, f.cacheData)
 	}
+	f.mu.Lock()
 	ctx := context.Background()
 	data, err := f.dictionaryService.GetDictionary(ctx, "https://japanesetest4you.com/jlpt-n1-vocabulary-list/")
 	if err != nil {
 		log.Fatal(err)
 	}
 	data = f.translateService.TranslateData(ctx, data)
-	f.mu.Lock()
 	f.cacheData = data
 	f.mu.Unlock()
 	return c.JSON(http.StatusOK, data)
