@@ -4,6 +4,25 @@ Dictionary
 
 {{define "body"}}
 <style>
+    #act-button{
+        position: relative;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        height: 50px;
+    }
+
+    #btn-reload {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+    }
+
+    #btn-sync {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+
     table {
         font-family: arial, sans-serif;
         border-collapse: collapse;
@@ -68,6 +87,10 @@ Dictionary
 </style>
 <div class="container">
     <h2 style="text-align: center">日本語検定試験N1言葉</h2>
+    <div id="act-button">
+        <button type="button" id="btn-reload" class="btn btn-primary" onclick="getDictionary()">Reload</button>
+        <button type="button" id="btn-sync" class="btn btn-danger" onclick="getDictionary(true)">Sync</button>
+    </div>
     <table id="dict-table">
         <colgroup>
             <col style="width:150px">
@@ -87,12 +110,16 @@ Dictionary
     <div id="loader"></div>
 </div>
 <script>
-    function getDictionary(){
-        $.get("./api/dictionary")
+    function getDictionary(notCache){
+        showLoading();
+        let url = "./api/dictionary";
+        if (notCache) {
+            url = url + "?not_cache=true"
+        }
+        $.get(url)
             .done(function(data) {
                 if(data.length > 0) {
                     var content = "";
-                    showPage();
                     data.forEach(function(row) {
                         content = "<tr>";
                         content = content + "<td>" + row.text + "</td>";
@@ -103,15 +130,22 @@ Dictionary
                         content = content + "</tr>";
                         $('#dict-table').append(content);
                     });
+                    showPage();
                 }
             })
             .fail(function() {
-                alert( "error" );
+                showPage();
             })
     }
 
-    function showPage() {
+    function showPage(){
         document.getElementById("loader").style.display = "none";
+        document.getElementById("dict-table").style.display = "block";
+    }
+
+    function showLoading(){
+        document.getElementById("loader").style.display = "block";
+        document.getElementById("dict-table").style.display = "none";
     }
 
     //Call getDictionary on page load.
