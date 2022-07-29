@@ -3,152 +3,33 @@ Dictionary
 {{end}}
 
 {{define "body"}}
-<style>
-    #act-button{
-        position: relative;
-        margin-top: 10px;
-        margin-bottom: 10px;
-        height: 50px;
-    }
-
-    #btn-reload {
-        position: absolute;
-        left: 10px;
-        top: 10px;
-    }
-
-    #btn-sync {
-        position: absolute;
-        right: 10px;
-        top: 10px;
-    }
-
-    table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    td, th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-    }
-
-    tr:nth-child(even) {
-        background-color: #dddddd;
-    }
-
-    /* Center the loader */
-    #loader {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        z-index: 1;
-        width: 120px;
-        height: 120px;
-        margin: -76px 0 0 -76px;
-        border: 16px solid #f3f3f3;
-        border-radius: 50%;
-        border-top: 16px solid #3498db;
-        -webkit-animation: spin 2s linear infinite;
-        animation: spin 2s linear infinite;
-    }
-
-    @-webkit-keyframes spin {
-        0% { -webkit-transform: rotate(0deg); }
-        100% { -webkit-transform: rotate(360deg); }
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    /* Add animation to "page content" */
-    .animate-bottom {
-        position: relative;
-        -webkit-animation-name: animatebottom;
-        -webkit-animation-duration: 1s;
-        animation-name: animatebottom;
-        animation-duration: 1s
-    }
-
-    @-webkit-keyframes animatebottom {
-        from { bottom:-100px; opacity:0 }
-        to { bottom:0px; opacity:1 }
-    }
-
-    @keyframes animatebottom {
-        from{ bottom:-100px; opacity:0 }
-        to{ bottom:0; opacity:1 }
-    }
-
-</style>
+<link href="static/dictionary.css" rel="stylesheet">
 <div class="container">
-    <h2 style="text-align: center">日本語検定試験N1言葉</h2>
+    <h2 style="text-align: center">日本語検定試験語彙</h2>
+    <div style="text-align: center">
+        <label class="radio-inline"><input type="radio" name="oplevel" value="n1" checked>N1</label>
+        <label class="radio-inline"><input type="radio" name="oplevel" value="n2">N2</label>
+        <label class="radio-inline"><input type="radio" name="oplevel" value="n3">N3</label>
+        <label class="radio-inline"><input type="radio" name="oplevel" value="n4">N4</label>
+        <label class="radio-inline"><input type="radio" name="oplevel" value="n5">N5</label>
+    </div>
     <div id="act-button">
         <button type="button" id="btn-reload" class="btn btn-primary" onclick="getDictionary()">Reload</button>
         <button type="button" id="btn-sync" class="btn btn-danger" onclick="getDictionary(true)">Sync</button>
     </div>
-    <table id="dict-table">
-        <colgroup>
-            <col style="width:150px">
-            <col style="width:150px">
-            <col style="width:150px">
-            <col style="width:200px">
-            <col>
-        </colgroup>
+    <table id="dict-table" class="table table-bordered">
         <tr>
-            <th>言葉</th>
-            <th>読み方</th>
-            <th>英語</th>
-            <th>ベトナム後</th>
-            <th>詳細</th>
+            <th style="width: 50px">番号</th>
+            <th style="width: 150px">言葉</th>
+            <th style="width: 150px">読み方</th>
+            <th style="width: 200px">英語</th>
+            <th style="width: 200px">ベトナム後</th>
+            <th style="width: auto">詳細</th>
         </tr>
+        <tbody id="dict-table-body">
+        </tbody>
     </table>
     <div id="loader"></div>
 </div>
-<script>
-    function getDictionary(notCache){
-        showLoading();
-        let url = "./api/dictionary";
-        if (notCache) {
-            url = url + "?not_cache=true"
-        }
-        $.get(url)
-            .done(function(data) {
-                if(data.length > 0) {
-                    var content = "";
-                    data.forEach(function(row) {
-                        content = "<tr>";
-                        content = content + "<td>" + row.text + "</td>";
-                        content = content + "<td>" + row.alphabet + "</td>";
-                        content = content + "<td>" + row.mean_eng + "</td>";
-                        content = content + "<td>" + row.mean_vn + "</td>";
-                        content = content + "<td>" + row.detail + "</td>";
-                        content = content + "</tr>";
-                        $('#dict-table').append(content);
-                    });
-                    showPage();
-                }
-            })
-            .fail(function() {
-                showPage();
-            })
-    }
-
-    function showPage(){
-        document.getElementById("loader").style.display = "none";
-        document.getElementById("dict-table").style.display = "block";
-    }
-
-    function showLoading(){
-        document.getElementById("loader").style.display = "block";
-        document.getElementById("dict-table").style.display = "none";
-    }
-
-    //Call getDictionary on page load.
-    getDictionary();
-</script>
+<script src="static/dictionary.js" type="text/javascript"></script>
 {{end}}

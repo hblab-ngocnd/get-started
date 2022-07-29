@@ -17,9 +17,16 @@ type Word struct {
 
 func MakeWord(c *html.Node, detail string, index int) *Word {
 	if c.FirstChild == nil {
-		return nil
+		c = c.Parent
 	}
 	idx := strings.Index(c.FirstChild.Data, ":")
+	if idx < 0 {
+		return &Word{
+			Index:  index,
+			Text:   c.FirstChild.Data,
+			Detail: detail,
+		}
+	}
 	mean := c.FirstChild.Data[idx+1:]
 	arr := strings.Split(c.FirstChild.Data[:idx], " ")
 	text := arr[0]

@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -14,7 +15,7 @@ import (
 type dictHandler struct {
 	translateService  services.TranslateService
 	dictionaryService services.DictionaryService
-	cacheData         []models.Word
+	cacheData         map[string][]models.Word
 	mu                sync.Mutex
 }
 
@@ -31,19 +32,32 @@ func (f *dictHandler) Dict(c echo.Context) error {
 
 func (f *dictHandler) ApiDict(c echo.Context) error {
 	notCache := c.QueryParam("not_cache")
-	if notCache != "true" && f.cacheData != nil {
+	level := c.QueryParam("level")
+	if level == "" {
+		level = "n1"
+	}
+	switch level {
+	case "n1", "n2", "n3", "n4", "n5":
+	default:
+		return c.NoContent(http.StatusBadRequest)
+	}
+	if notCache != "true" && f.cacheData != nil && f.cacheData[level] != nil {
 		f.mu.Lock()
 		defer f.mu.Unlock()
-		return c.JSON(http.StatusOK, f.cacheData)
+		return c.JSON(http.StatusOK, f.cacheData[level])
 	}
 	f.mu.Lock()
 	ctx := context.Background()
-	data, err := f.dictionaryService.GetDictionary(ctx, "https://japanesetest4you.com/jlpt-n1-vocabulary-list/")
+	url := fmt.Sprintf("https://japanesetest4you.com/jlpt-%s-vocabulary-list/", level)
+	data, err := f.dictionaryService.GetDictionary(ctx, url)
 	if err != nil {
 		log.Fatal(err)
 	}
 	data = f.translateService.TranslateData(ctx, data)
-	f.cacheData = data
+	if f.cacheData == nil {
+		f.cacheData = make(map[string][]models.Word)
+	}
+	f.cacheData[level] = data
 	f.mu.Unlock()
 	return c.JSON(http.StatusOK, data)
 }

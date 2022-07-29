@@ -80,7 +80,7 @@ func translateData(ctx context.Context, data []models.Word) []models.Word {
 		}
 	}
 	result := make([]models.Word, 0, len(mapData))
-	for i := 0; i < len(mapData)+5; i++ {
+	for i := 0; i < len(mapData); i++ {
 		if w, ok := mapData[i]; ok {
 			result = append(result, w)
 		}

@@ -48,9 +48,12 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	}
 	tag := helpers.GetElementByClass(doc, "entry clearfix")
 	targets := helpers.GetListElementByTag(tag, "p")
+	if len(targets) > 3 {
+		targets = targets[3:]
+	}
 	var wg sync.WaitGroup
 	var mu sync.Mutex
-	mapWords := make(map[int]models.Word, len(targets)-5)
+	mapWords := make(map[int]models.Word, len(targets))
 	for i, target := range targets {
 		id := i
 		if os.Getenv("DEBUG") == "true" && i == 70 {
@@ -62,7 +65,7 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 			defer wg.Done()
 			c := tar.FirstChild
 			if c == nil {
-				return
+				c = tar
 			}
 			var detail string
 			var errDetail error
@@ -71,8 +74,6 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 				if errDetail != nil {
 					log.Println(errDetail)
 				}
-			} else {
-				return
 			}
 			w := models.MakeWord(c, detail, id)
 			if w == nil {
@@ -86,7 +87,7 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	wg.Wait()
 	log.Println("clone done")
 	data := make([]models.Word, 0, len(mapWords))
-	for i := 0; i < len(mapWords)+5; i++ {
+	for i := 0; i < len(mapWords); i++ {
 		if w, ok := mapWords[i]; ok {
 			data = append(data, w)
 		}
