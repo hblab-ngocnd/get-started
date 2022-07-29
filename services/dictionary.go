@@ -97,7 +97,7 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 func (d *dictionaryService) getDetail(ctx context.Context, url string, i int) (string, error) {
 	log.Println("start with goroutine ", i)
 	defer log.Println("end with goroutine ", i)
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {

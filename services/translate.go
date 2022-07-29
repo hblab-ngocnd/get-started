@@ -92,7 +92,7 @@ func translateToVN(ctx context.Context, texts []string) []string {
 	log.Println("start translate")
 	defer log.Println("end translate")
 	apiKey := os.Getenv("GOOGLE_APPLICATION_API_KEY")
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
 	defer cancel()
 	lang, _ := language.Parse("vi")
 	client, err := translate.NewClient(ctx, option.WithAPIKey(apiKey))
