@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/hblab-ngocnd/get-started/handlers"
+	"github.com/hblab-ngocnd/get-started/controller"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
@@ -31,6 +31,7 @@ func SetupServer() *echo.Echo {
 	templates := make(map[string]*template.Template)
 	templates["home.html"] = template.Must(template.ParseFiles("public/views/home.html", "public/views/base.html"))
 	templates["upload.html"] = template.Must(template.ParseFiles("public/views/upload.html", "public/views/base.html"))
+	templates["dictionary.html"] = template.Must(template.ParseFiles("public/views/dictionary.html", "public/views/base.html"))
 
 	e.Renderer = &TemplateRegistry{
 		templates: templates,
@@ -43,11 +44,14 @@ func SetupServer() *echo.Echo {
 	e.GET("/", func(c echo.Context) error {
 		return c.Render(http.StatusOK, "home.html", map[string]interface{}{"router": "home"})
 	})
-	visitorHandler := handlers.NewVisitorHandler(GetDB())
+	visitorHandler := controller.NewVisitorHandler(GetDB())
 	e.POST("/api/visitors", visitorHandler.CreateVisitor)
 	e.GET("/api/visitors", visitorHandler.ListVisitor)
-	fileHandler := handlers.NewFileHandler()
+	fileHandler := controller.NewFileHandler()
 	e.GET("/upload", fileHandler.UploadFiles)
 	e.POST("/api/upload", fileHandler.ApiUpload)
+	dictHandler := controller.NewDictHandler()
+	e.GET("/dictionary", dictHandler.Dict)
+	e.GET("/api/dictionary", dictHandler.ApiDict)
 	return e
 }

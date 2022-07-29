@@ -1,0 +1,70 @@
+{{define "title"}}
+Dictionary
+{{end}}
+
+{{define "body"}}
+<style>
+    table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    td, th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+</style>
+<div class="container">
+    <p id="databaseNames" class="lead text-center"></p>
+    <h2>HTML Table</h2>
+
+    <table id="dict-table">
+        <colgroup>
+            <col style="width:150px">
+            <col style="width:150px">
+            <col style="width:150px">
+            <col style="width:200px">
+            <col>
+        </colgroup>
+        <tr>
+            <th>言葉</th>
+            <th>読み方</th>
+            <th>英語</th>
+            <th>ベトナム後</th>
+            <th>詳細</th>
+        </tr>
+    </table>
+</div>
+<script>
+    //Retreive all the visitors from the database
+    function getNames(){
+        $('#databaseNames').html("loading...");
+        $.get("./api/dictionary")
+            .done(function(data) {
+                if(data.length > 0) {
+                    var content = "";
+                    data.forEach(function(row) {
+                        content = content + "<tr>";
+                        content = content + "<td>" + row.text + "</td>";
+                        content = content + "<td>" + row.alphabet + "</td>";
+                        content = content + "<td>" + row.mean_eng + "</td>";
+                        content = content + "<td>" + row.mean_vn + "</td>";
+                        content = content + "<td>" + row.detail + "</td>";
+                        content = content + "</tr>";
+                    });
+                    $('#dict-table').append(content);
+                    $('#databaseNames').html("");
+                }
+            });
+    }
+
+    //Call getNames on page load.
+    getNames();
+</script>
+{{end}}
