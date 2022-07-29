@@ -19,11 +19,55 @@ Dictionary
     tr:nth-child(even) {
         background-color: #dddddd;
     }
+
+    /* Center the loader */
+    #loader {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        z-index: 1;
+        width: 120px;
+        height: 120px;
+        margin: -76px 0 0 -76px;
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #3498db;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Add animation to "page content" */
+    .animate-bottom {
+        position: relative;
+        -webkit-animation-name: animatebottom;
+        -webkit-animation-duration: 1s;
+        animation-name: animatebottom;
+        animation-duration: 1s
+    }
+
+    @-webkit-keyframes animatebottom {
+        from { bottom:-100px; opacity:0 }
+        to { bottom:0px; opacity:1 }
+    }
+
+    @keyframes animatebottom {
+        from{ bottom:-100px; opacity:0 }
+        to{ bottom:0; opacity:1 }
+    }
+
 </style>
 <div class="container">
-    <p id="databaseNames" class="lead text-center"></p>
-    <h2>HTML Table</h2>
-
+    <h2 style="text-align: center">日本語検定試験N1言葉</h2>
     <table id="dict-table">
         <colgroup>
             <col style="width:150px">
@@ -40,31 +84,34 @@ Dictionary
             <th>詳細</th>
         </tr>
     </table>
+    <div id="loader"></div>
 </div>
 <script>
-    //Retreive all the visitors from the database
-    function getNames(){
-        $('#databaseNames').html("loading...");
+    function getDictionary(){
         $.get("./api/dictionary")
             .done(function(data) {
                 if(data.length > 0) {
                     var content = "";
+                    showPage();
                     data.forEach(function(row) {
-                        content = content + "<tr>";
+                        content = "<tr>";
                         content = content + "<td>" + row.text + "</td>";
                         content = content + "<td>" + row.alphabet + "</td>";
                         content = content + "<td>" + row.mean_eng + "</td>";
                         content = content + "<td>" + row.mean_vn + "</td>";
                         content = content + "<td>" + row.detail + "</td>";
                         content = content + "</tr>";
+                        $('#dict-table').append(content);
                     });
-                    $('#dict-table').append(content);
-                    $('#databaseNames').html("");
                 }
             });
     }
 
-    //Call getNames on page load.
-    getNames();
+    function showPage() {
+        document.getElementById("loader").style.display = "none";
+    }
+
+    //Call getDictionary on page load.
+    getDictionary();
 </script>
 {{end}}
