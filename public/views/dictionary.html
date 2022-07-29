@@ -104,7 +104,10 @@ Dictionary
                         $('#dict-table').append(content);
                     });
                 }
-            });
+            })
+            .fail(function() {
+                alert( "error" );
+            })
     }
 
     function showPage() {
