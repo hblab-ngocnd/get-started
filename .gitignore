@@ -26,7 +26,7 @@ _testmain.go
 app
 get-started
 .env
-.env-test
+.env_test
 /vendor/
 tmp/
 bin/
