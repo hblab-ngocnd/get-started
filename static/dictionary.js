@@ -49,8 +49,15 @@ window.onscroll = function(ev) {
 };
 
 $('input[type=radio][name=oplevel]').change(function() {
-    getDictionary();
+    reload();
 });
+
+function reload(){
+    document.getElementById("paging").setAttribute("data-lock","false");
+    document.getElementById("paging").setAttribute("data-start","0");
+    document.getElementById("paging").setAttribute("data-offset","0");
+    getDictionary();
+}
 
 function showDetail(el){
     let a = "<div class='modal-detail'>" + document.getElementById($(el).attr("data-detail")).innerHTML + "</div>";
