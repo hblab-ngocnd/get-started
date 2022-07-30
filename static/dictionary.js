@@ -1,5 +1,7 @@
 function getDictionary(notCache){
-    resetPaging();
+    if (notCache) {
+        resetPaging();
+    }
     showLoading();
     let url = "./api/dictionary";
     let params = { not_cache:false, level:"n5", start:0,page_size: 20,password:""};
