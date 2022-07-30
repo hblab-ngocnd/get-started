@@ -22,6 +22,7 @@ Create .env file
 CLOUDANT_URL=dasdsa
 GOOGLE_APPLICATION_API_KEY=sss
 DEBUG=true
+SYNC_PASS=123456
 ```
 Build and run the app.
   ```

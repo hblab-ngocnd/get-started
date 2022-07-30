@@ -15,7 +15,12 @@ Dictionary
     </div>
     <div id="act-button">
         <button type="button" id="btn-reload" class="btn btn-primary" onclick="reload()">Reload</button>
-        <button type="button" id="btn-sync" class="btn btn-danger" onclick="getDictionary(true)">Sync</button>
+        <div id="btn-sync" class="input-group mb-3">
+            <input type="password" name="sync-password" class="form-control" placeholder="password" aria-label="password" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+                <button type="button" class="btn btn-danger btn-outline-secondary" onclick="getDictionary(true)">Sync</button>
+            </div>
+        </div>
     </div>
     <table id="dict-table" class="table table-bordered">
         <tr>

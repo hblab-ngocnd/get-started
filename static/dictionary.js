@@ -1,9 +1,11 @@
 function getDictionary(notCache){
+    resetPaging();
     showLoading();
     let url = "./api/dictionary";
-    let params = { not_cache:false, level:"n5", start:0,page_size: 20};
+    let params = { not_cache:false, level:"n5", start:0,page_size: 20,password:""};
     if (notCache) {
         params.not_cache = true;
+        params.password = document.getElementsByName("sync-password")[0].value;
     }
     params.page_size = parseInt(document.getElementById("paging").getAttribute("data-page-size"),10)
     params.start = parseInt(document.getElementById("paging").getAttribute("data-start"),10)
@@ -36,7 +38,8 @@ function getDictionary(notCache){
             showPage();
         })
         .fail(function() {
-            showPage();
+            location.reload();
+            //showPage();
         })
 }
 
@@ -54,10 +57,14 @@ $('input[type=radio][name=oplevel]').change(function() {
 });
 
 function reload(){
+    resetPaging();
+    getDictionary();
+}
+
+function resetPaging(){
     document.getElementById("paging").setAttribute("data-lock","false");
     document.getElementById("paging").setAttribute("data-start","0");
     document.getElementById("paging").setAttribute("data-offset","0");
-    getDictionary();
 }
 
 function showDetail(el){

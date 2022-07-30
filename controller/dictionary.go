@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/hblab-ngocnd/get-started/models"
@@ -62,6 +64,12 @@ func (f *dictHandler) ApiDict(c echo.Context) error {
 			end = len(f.cacheData[level])
 		}
 		return c.JSON(http.StatusOK, f.cacheData[level][start:end])
+	}
+	if notCache == "true" {
+		pwd := c.QueryParam("password")
+		if len(strings.TrimSpace(pwd)) == 0 || pwd != os.Getenv("SYNC_PASS") {
+			return c.NoContent(http.StatusBadRequest)
+		}
 	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
