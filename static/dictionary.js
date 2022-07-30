@@ -13,17 +13,18 @@ function getDictionary(notCache){
         .done(function(data) {
             if(data.length > 0) {
                 let content = "";
-                if(params.start == 0){
+                if(params.start === 0){
                     $('#dict-table-body').html("");
                 }
                 data.forEach(function(row,index) {
+                    let globalIdx = index + params.start
                     content = "<tr>";
-                    content = content + "<td>" + (index + params.start + 1) + "</td>";
+                    content = content + "<td>" + (globalIdx + 1) + "</td>";
                     content = content + "<td>" + row.text + "</td>";
                     content = content + "<td>" + row.alphabet + "</td>";
                     content = content + "<td>" + row.mean_eng + "</td>";
                     content = content + "<td>" + row.mean_vn + "</td>";
-                    content = content + "<td><div class='content-detail' id='content-detail-"+index+"'>" + row.detail + "</div><button class='btn btn-default btn-sm btn-detail' data-toggle='modal' data-target='.bd-example-modal-lg' data-detail='content-detail-"+index+"' onclick='showDetail(this)'><span class='glyphicon glyphicon-info-sign'></span> 詳細</button></td>";
+                    content = content + "<td><div class='content-detail' id='content-detail-" + globalIdx + "'>" + row.detail + "</div><button class='btn btn-default btn-sm btn-detail' data-toggle='modal' data-target='.bd-example-modal-lg' data-detail='content-detail-" + globalIdx + "' onclick='showDetail(this)'><span class='glyphicon glyphicon-info-sign'></span> 詳細</button></td>";
                     content = content + "</tr>";
                     $('#dict-table-body').append(content);
                 });
@@ -41,7 +42,7 @@ function getDictionary(notCache){
 
 window.onscroll = function(ev) {
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-        if(document.getElementById("paging").getAttribute("data-lock") == "false"){
+        if(document.getElementById("paging").getAttribute("data-lock") === "false"){
             document.getElementById("paging").setAttribute("data-offset",document.body.offsetHeight.toString());
             getDictionary();
         }
@@ -72,7 +73,10 @@ function showPage(){
 
 function showLoading(){
     document.getElementById("loader").style.display = "block";
-    document.getElementById("dict-table").style.display = "none";
+    let start = parseInt(document.getElementById("paging").getAttribute("data-start"),10)
+    if(start === 0){
+        document.getElementById("dict-table").style.display = "none";
+    }
     document.getElementById("paging").setAttribute("data-lock","true");
 }
 

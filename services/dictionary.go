@@ -48,8 +48,8 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	}
 	tag := helpers.GetElementByClass(doc, "entry clearfix")
 	targets := helpers.GetListElementByTag(tag, "p")
-	if len(targets) > 3 {
-		targets = targets[3:]
+	if len(targets) > 2 {
+		targets = targets[2:]
 	}
 	var wg sync.WaitGroup
 	var mu sync.Mutex
