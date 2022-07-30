@@ -61,7 +61,7 @@ function reload(){
 
 function showDetail(el){
     let a = "<div class='modal-detail'>" + document.getElementById($(el).attr("data-detail")).innerHTML + "</div>";
-   document.getElementsByClassName("modal-content")[0].innerHTML = a;
+   document.getElementsByClassName("modal-content-detail")[0].innerHTML = a;
 }
 
 function showPage(){
