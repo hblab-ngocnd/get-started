@@ -29,7 +29,7 @@ func (t *translateService) TranslateData(ctx context.Context, data []models.Word
 	return translateData(ctx, data)
 }
 
-var BucketSize = 50
+var BucketSize = 100
 
 func translateData(ctx context.Context, data []models.Word) []models.Word {
 	mapData := make(map[int]models.Word, len(data))
@@ -73,14 +73,18 @@ func translateData(ctx context.Context, data []models.Word) []models.Word {
 			translated = append(translated, arr...)
 		}
 	}
+	start := 0
 	for i, vn := range translated {
 		if v, ok := mapData[i]; ok {
+			if start == 0 {
+				start = i
+			}
 			v.MeanVN = vn
 			mapData[i] = v
 		}
 	}
 	result := make([]models.Word, 0, len(mapData))
-	for i := 0; i < len(mapData); i++ {
+	for i := start; i < len(mapData)+start; i++ {
 		if w, ok := mapData[i]; ok {
 			result = append(result, w)
 		}

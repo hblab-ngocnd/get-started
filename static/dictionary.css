@@ -1,6 +1,6 @@
-@media (min-width: 1600px) {
+@media (min-width: 1400px) {
     .container {
-        width: 1600px;
+        width: 1400px;
     }
 }
 #act-button{
@@ -40,6 +40,15 @@ th {
 
 tr:nth-child(even) {
     background-color: #dddddd;
+}
+
+.content-detail {
+    height: 170px;
+    overflow: scroll;
+}
+
+.modal-detail {
+    padding: 25px;
 }
 
 /* Center the loader */
