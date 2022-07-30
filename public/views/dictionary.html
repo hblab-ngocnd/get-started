@@ -14,7 +14,7 @@ Dictionary
         <label class="radio-inline"><input type="radio" name="oplevel" value="n5">N5</label>
     </div>
     <div id="act-button">
-        <button type="button" id="btn-reload" class="btn btn-primary" onclick="getDictionary()">Reload</button>
+        <button type="button" id="btn-reload" class="btn btn-primary" onclick="reload()">Reload</button>
         <button type="button" id="btn-sync" class="btn btn-danger" onclick="getDictionary(true)">Sync</button>
     </div>
     <table id="dict-table" class="table table-bordered">
@@ -30,6 +30,14 @@ Dictionary
         </tbody>
     </table>
     <div id="loader"></div>
+    <div id="paging" data-start="0" data-page-size="20" data-lock="false"></div>
+</div>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            ...
+        </div>
+    </div>
 </div>
 <script src="static/dictionary.js" type="text/javascript"></script>
 {{end}}
