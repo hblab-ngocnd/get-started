@@ -93,3 +93,30 @@ func (f *dictHandler) ApiDict(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, data[start:end])
 }
+
+func (f *dictHandler) ApiGetDetail(c echo.Context) error {
+	index, err := strconv.Atoi(c.Param("index"))
+	if err != nil {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	level := c.QueryParam("level")
+	switch level {
+	case "n1", "n2", "n3", "n4", "n5":
+	default:
+		return c.NoContent(http.StatusBadRequest)
+	}
+	if f.cacheData[level] == nil && index >= len(f.cacheData[level]) {
+		return c.NoContent(http.StatusBadRequest)
+	}
+	detailURL := f.cacheData[level][index].Link
+	if strings.TrimSpace(detailURL) == "" {
+		return c.String(http.StatusOK, "")
+	}
+	ctx := context.Background()
+	data, err := f.dictionaryService.GetDetail(ctx, detailURL, index)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	f.cacheData[level][index].Detail = data
+	return c.String(http.StatusOK, data)
+}

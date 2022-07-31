@@ -25,6 +25,7 @@ func NewDictionary() *dictionaryService {
 
 type DictionaryService interface {
 	GetDictionary(context.Context, string) ([]models.Word, error)
+	GetDetail(context.Context, string, int) (string, error)
 }
 
 func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]models.Word, error) {
@@ -69,13 +70,14 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 			}
 			var detail string
 			var errDetail error
+			var detailURL string
 			if detailURL, ok := helpers.GetAttribute(c, "href"); ok {
 				detail, errDetail = d.getDetail(ctx, detailURL, id)
 				if errDetail != nil {
 					log.Println(errDetail)
 				}
 			}
-			w := models.MakeWord(c, detail, id)
+			w := models.MakeWord(c, detailURL, detail, id)
 			if w == nil {
 				return
 			}
@@ -94,7 +96,9 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	}
 	return data, nil
 }
-
+func (d *dictionaryService) GetDetail(ctx context.Context, url string, i int) (string, error) {
+	return d.getDetail(ctx, url, i)
+}
 func (d *dictionaryService) getDetail(ctx context.Context, url string, i int) (string, error) {
 	log.Println("start with goroutine ", i)
 	defer log.Println("end with goroutine ", i)

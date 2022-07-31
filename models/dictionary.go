@@ -13,9 +13,10 @@ type Word struct {
 	MeanEng  string `json:"mean_eng"`
 	MeanVN   string `json:"mean_vn"`
 	Detail   string `json:"detail"`
+	Link     string `json:"_"`
 }
 
-func MakeWord(c *html.Node, detail string, index int) *Word {
+func MakeWord(c *html.Node, link, detail string, index int) *Word {
 	if c.FirstChild == nil {
 		c = c.Parent
 	}
@@ -25,6 +26,7 @@ func MakeWord(c *html.Node, detail string, index int) *Word {
 			Index:  index,
 			Text:   c.FirstChild.Data,
 			Detail: detail,
+			Link:   link,
 		}
 	}
 	mean := c.FirstChild.Data[idx+1:]
@@ -40,5 +42,6 @@ func MakeWord(c *html.Node, detail string, index int) *Word {
 		Alphabet: alphabet,
 		MeanEng:  mean,
 		Detail:   detail,
+		Link:     link,
 	}
 }

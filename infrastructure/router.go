@@ -53,5 +53,6 @@ func SetupServer() *echo.Echo {
 	dictHandler := controller.NewDictHandler()
 	e.GET("/dictionary", dictHandler.Dict)
 	e.GET("/api/dictionary", dictHandler.ApiDict)
+	e.PUT("api/dictionary/:index", dictHandler.ApiGetDetail)
 	return e
 }
