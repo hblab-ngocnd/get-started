@@ -107,6 +107,7 @@ function showLoading(){
     let start = parseInt(document.getElementById("paging").getAttribute("data-start"),10)
     if(start === 0){
         document.getElementById("dict-table").style.display = "none";
+    }else{
         document.getElementById("paging").innerText = "loading more...";
     }
     document.getElementById("paging").setAttribute("data-lock","true");

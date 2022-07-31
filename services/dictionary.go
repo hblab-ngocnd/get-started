@@ -29,7 +29,7 @@ type DictionaryService interface {
 }
 
 func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]models.Word, error) {
-	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
