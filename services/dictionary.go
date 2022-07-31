@@ -29,6 +29,8 @@ type DictionaryService interface {
 }
 
 func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]models.Word, error) {
+	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
 	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		log.Fatal(err)
@@ -57,7 +59,7 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	mapWords := make(map[int]models.Word, len(targets))
 	for i, target := range targets {
 		id := i
-		if os.Getenv("DEBUG") == "true" && i == 70 {
+		if os.Getenv("DEBUG") == "true" && i == 40 {
 			break
 		}
 		tar := target
@@ -70,8 +72,8 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 			}
 			var detail string
 			var errDetail error
-			var detailURL string
-			if detailURL, ok := helpers.GetAttribute(c, "href"); ok {
+			detailURL, ok := helpers.GetAttribute(c, "href")
+			if ok {
 				detail, errDetail = d.getDetail(ctx, detailURL, id)
 				if errDetail != nil {
 					log.Println(errDetail)
