@@ -77,6 +77,7 @@ function showDetail(el){
 }
 
 function getDetail(el,idx){
+    el.disabled = "disabled";
     el.innerHTML = "Loading...";
     let url = "./api/dictionary/" + idx;
     let params = { level:"n5" };
@@ -88,7 +89,7 @@ function getDetail(el,idx){
         success: function (result) {
             document.getElementById($(el).attr("data-detail")).innerHTML = result;
             showDetail(el);
-            el.outerHTML = "<button class='btn btn-default btn-sm btn-detail' data-toggle='modal' data-target='.bd-example-modal-lg' data-detail='content-detail-" + idx + "' onclick='showDetail(this)'><span class='glyphicon glyphicon-info-sign'></span> 詳細</button>"
+            el.outerHTML = "<button class='btn btn-default btn-sm btn-detail' data-toggle='modal' data-target='.bd-example-modal-lg' data-detail='content-detail-" + idx + "' onclick='showDetail(this)'><span class='glyphicon glyphicon-info-sign'></span> 詳細</button>";
             $('.bd-example-modal-lg').modal('toggle');
         },
     });
