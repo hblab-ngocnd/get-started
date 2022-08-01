@@ -77,17 +77,16 @@ function showDetail(el){
 }
 
 function getDetail(el,idx){
+    el.innerHTML = "Loading...";
     let url = "./api/dictionary/" + idx;
     let params = { level:"n5" };
     params.level = $('input[type=radio][name=oplevel]:checked').val()
     url = url + "?" + $.param(params);
-    console.log($);
     $.ajax({
         url: url,
         type: 'PUT',
         success: function (result) {
             document.getElementById($(el).attr("data-detail")).innerHTML = result;
-            $("#" + $(el).attr("data-detail")).parent.innerHTML = "";
             showDetail(el);
             el.outerHTML = "<button class='btn btn-default btn-sm btn-detail' data-toggle='modal' data-target='.bd-example-modal-lg' data-detail='content-detail-" + idx + "' onclick='showDetail(this)'><span class='glyphicon glyphicon-info-sign'></span> 詳細</button>"
             $('.bd-example-modal-lg').modal('toggle');
