@@ -26,6 +26,7 @@ func NewDictionary() *dictionaryService {
 type DictionaryService interface {
 	GetDictionary(context.Context, string) ([]models.Word, error)
 	GetDetail(context.Context, string, int) (string, error)
+	GetITJapanWonderWork(context.Context, string) ([][]models.WonderWork, error)
 }
 
 func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]models.Word, error) {
@@ -98,9 +99,11 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	}
 	return data, nil
 }
+
 func (d *dictionaryService) GetDetail(ctx context.Context, url string, i int) (string, error) {
 	return d.getDetail(ctx, url, i)
 }
+
 func (d *dictionaryService) getDetail(ctx context.Context, url string, i int) (string, error) {
 	log.Println("start with goroutine ", i)
 	defer log.Println("end with goroutine ", i)
@@ -139,4 +142,43 @@ func (d *dictionaryService) getDetail(ctx context.Context, url string, i int) (s
 		}
 	}
 	return strings.Join(data, ""), nil
+}
+
+func (d *dictionaryService) GetITJapanWonderWork(ctx context.Context, url string) ([][]models.WonderWork, error) {
+	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
+	defer cancel()
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	client := http.DefaultClient
+	res, err := client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	body, err := io.ReadAll(res.Body)
+	res.Body.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	doc, err := html.Parse(bytes.NewReader(body))
+	if err != nil {
+		log.Fatal(err)
+	}
+	contentDiv := helpers.GetElementById(doc, "personal-public-article-body")
+	nextDiv := helpers.GetListElementByTag(contentDiv, "div")
+	tables := helpers.GetListElementByTag(nextDiv[0], "table")
+	data := make([][]models.WonderWork, len(tables))
+	for idx1, table := range tables {
+		tbody := helpers.GetListElementByTag(table, "tbody")
+		trs := helpers.GetListElementByTag(tbody[0], "tr")
+		data[idx1] = make([]models.WonderWork, len(trs))
+		for idx2, tr := range trs {
+			work := models.MakeWonderWork(tr, idx2)
+			if work != nil {
+				data[idx1][idx2] = *work
+			}
+		}
+	}
+	return data, nil
 }
