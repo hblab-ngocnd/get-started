@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hblab-ngocnd/get-started/models"
@@ -11,9 +12,11 @@ import (
 )
 
 func InitTest() {
-	err := godotenv.Load("../.env_test")
-	if err != nil {
-		panic(err)
+	if os.Getenv("CI_TEST") != "true" {
+		err := godotenv.Load("../.env_test")
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
