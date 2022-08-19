@@ -1,19 +1,5 @@
-all: test
-
-clean:
-	rm -f get-started
-
-install: prepare
-	godep go install
-
-prepare:
-	go get github.com/tools/godep
-
-build: prepare
-	godep go build
-
-test: prepare build
-	echo "no tests"
+NAME := get-started
+MOCKGEN_BUILD_FLAGS ?= -mod=mod
 
 deploy:
 	ibmcloud cf push
@@ -21,4 +7,8 @@ deploy:
 go.list:
 	go list -json -m all > go.list
 
-.PHONY: install prepare build test
+mockgen:
+	mockgen -build_flags=$(MOCKGEN_BUILD_FLAGS) -destination=./services/mock_services/mock_dictionary.go github.com/hblab-ngocnd/get-started/services DictionaryService
+	mockgen -build_flags=$(MOCKGEN_BUILD_FLAGS) -destination=./services/mock_services/mock_translate.go github.com/hblab-ngocnd/get-started/services TranslateService
+
+
