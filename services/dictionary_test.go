@@ -8,14 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDictionaryService_GetDictionary(t *testing.T) {
-	InitTest()
-	BucketSize = 2
-	ctx := context.Background()
-	data, err := NewDictionary().GetDictionary(ctx, "https://japanesetest4you.com/jlpt-n2-vocabulary-list/")
-	fmt.Printf("%+v", data)
-	assert.Equal(t, nil, err)
-}
+//func TestDictionaryService_GetDictionary(t *testing.T) {
+//	BucketSize = 2
+//	ctx := context.Background()
+//	data, err := NewDictionary().GetDictionary(ctx, "https://japanesetest4you.com/jlpt-n2-vocabulary-list/")
+//	fmt.Printf("%+v", data)
+//	assert.Equal(t, nil, err)
+//}
 
 func TestDictHandler_getDetail(t *testing.T) {
 	ctx := context.Background()

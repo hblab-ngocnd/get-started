@@ -4,23 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"sync"
 	"testing"
-
-	"github.com/joho/godotenv"
 )
 
-func InitTest() {
-	if os.Getenv("CI_TEST") != "true" {
-		err := godotenv.Load("../.env_test")
-		if err != nil {
-			panic(err)
-		}
-	}
-}
 func TestNewDictHandler(t *testing.T) {
-	InitTest()
 	var wg sync.WaitGroup
 	for i := 0; i < 2; i++ {
 		j := i + 1
