@@ -22,6 +22,11 @@ jobs:
           version: latest
   test:
     runs-on: ubuntu-latest
+    env:
+      CLOUDANT_URL: ${{ secrets.CLOUDANT_URL }}
+      GOOGLE_APPLICATION_API_KEY: ${{ secrets.GOOGLE_APPLICATION_API_KEY }}
+      DEBUG: true
+      CI_TEST: true
     steps:
       - name: Install Go
         if: success()
@@ -32,14 +37,14 @@ jobs:
         uses: actions/checkout@v2
       - name: Run tests
         run: make test
-        with:
-          CLOUDANT_URL: ${{ secrets.CLOUDANT_URL }}
-          GOOGLE_APPLICATION_API_KEY: ${{ secrets.GOOGLE_APPLICATION_API_KEY }}
-          DEBUG: true
-          CI_TEST: true
 
   coverage:
     runs-on: ubuntu-latest
+    env:
+      CLOUDANT_URL: ${{ secrets.CLOUDANT_URL }}
+      GOOGLE_APPLICATION_API_KEY: ${{ secrets.GOOGLE_APPLICATION_API_KEY }}
+      DEBUG: true
+      CI_TEST: true
     steps:
       - name: Install Go
         if: success()
@@ -51,11 +56,6 @@ jobs:
       - name: Make coverage
         run: |
           make coverage.out
-        with:
-          CLOUDANT_URL: ${{ secrets.CLOUDANT_URL }}
-          GOOGLE_APPLICATION_API_KEY: ${{ secrets.GOOGLE_APPLICATION_API_KEY }}
-          DEBUG: true
-          CI_TEST: true
       - name: Convert coverage.out to coverage.lcov
         uses: jandelgado/gcov2lcov-action@v1.0.8
       - name: Coveralls
