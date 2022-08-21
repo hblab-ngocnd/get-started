@@ -160,7 +160,7 @@ func Test_GetDetail(t *testing.T) {
 				mock.EXPECT().GetDetail(gomock.Any(), gomock.Any(), gomock.Any()).Return("data", nil)
 				return mock
 			},
-			expect: makeString("data"),
+			expect: makeTestString("data"),
 			err:    nil,
 		},
 		{
@@ -226,6 +226,6 @@ func Test_GetDetail(t *testing.T) {
 	}
 }
 
-func makeString(s string) *string {
+func makeTestString(s string) *string {
 	return &s
 }
