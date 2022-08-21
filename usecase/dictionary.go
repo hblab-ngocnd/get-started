@@ -76,7 +76,7 @@ func (u *dictUseCase) GetDict(ctx context.Context, start, pageSize int, notCache
 }
 
 func (u *dictUseCase) GetDetail(ctx context.Context, level string, index int) (*string, error) {
-	if u.cacheData[level] == nil && index >= len(u.cacheData[level]) {
+	if u.cacheData[level] == nil || index >= len(u.cacheData[level]) {
 		return nil, InvalidErr
 	}
 	detailURL := u.cacheData[level][index].Link

@@ -13,7 +13,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_GetDetail(t *testing.T) {
+func Test_GetDict(t *testing.T) {
 	patterns := []struct {
 		description             string
 		start                   int
@@ -88,6 +88,24 @@ func Test_GetDetail(t *testing.T) {
 			expect:      nil,
 			err:         PermissionDeniedErr,
 		},
+		{
+			description: "Success use Cache",
+			start:       0,
+			pageSize:    1,
+			notCache:    "false",
+			level:       "n1",
+			expect:      []models.Word{{}},
+			err:         nil,
+		},
+		{
+			description: "Success use Cache over size",
+			start:       0,
+			pageSize:    8,
+			notCache:    "false",
+			level:       "n1",
+			expect:      []models.Word{{}, {}, {}, {}},
+			err:         nil,
+		},
 	}
 
 	for i, p := range patterns {
@@ -106,6 +124,14 @@ func Test_GetDetail(t *testing.T) {
 			uc := dictUseCase{
 				dictionaryService: mockDict,
 				translateService:  mockTrans,
+				cacheData: map[string][]models.Word{
+					"n1": {
+						{},
+						{},
+						{},
+						{},
+					},
+				},
 			}
 			ctx := context.Background()
 			os.Setenv("SYNC_PASS", "sync_pass")
@@ -114,4 +140,92 @@ func Test_GetDetail(t *testing.T) {
 			assert.Equal(t, p.err, err)
 		})
 	}
+}
+
+func Test_GetDetail(t *testing.T) {
+	patterns := []struct {
+		description              string
+		level                    string
+		index                    int
+		newMockDictionaryService func(ctrl *gomock.Controller) services.DictionaryService
+		expect                   *string
+		err                      error
+	}{
+		{
+			description: "success",
+			level:       "n1",
+			index:       0,
+			newMockDictionaryService: func(ctrl *gomock.Controller) services.DictionaryService {
+				mock := mock_services.NewMockDictionaryService(ctrl)
+				mock.EXPECT().GetDetail(gomock.Any(), gomock.Any(), gomock.Any()).Return("data", nil)
+				return mock
+			},
+			expect: makeString("data"),
+			err:    nil,
+		},
+		{
+			description: "Fail on invalid level",
+			level:       "error",
+			index:       0,
+			expect:      nil,
+			err:         InvalidErr,
+		},
+		{
+			description: "Fail on invalid index",
+			level:       "n1",
+			index:       99,
+			expect:      nil,
+			err:         InvalidErr,
+		},
+		{
+			description: "Success null Link",
+			level:       "nil link",
+			index:       0,
+			expect:      nil,
+			err:         nil,
+		},
+		{
+			description: "Fail GetDetail",
+			level:       "n1",
+			index:       0,
+			newMockDictionaryService: func(ctrl *gomock.Controller) services.DictionaryService {
+				mock := mock_services.NewMockDictionaryService(ctrl)
+				mock.EXPECT().GetDetail(gomock.Any(), gomock.Any(), gomock.Any()).Return("", InvalidErr)
+				return mock
+			},
+			expect: nil,
+			err:    InvalidErr,
+		},
+	}
+
+	for i, p := range patterns {
+		t.Run(fmt.Sprintf("%d:%s", i, p.description), func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			var mockDict services.DictionaryService
+			if p.newMockDictionaryService != nil {
+				mockDict = p.newMockDictionaryService(ctrl)
+			}
+			uc := dictUseCase{
+				dictionaryService: mockDict,
+				cacheData: map[string][]models.Word{
+					"n1": {
+						models.Word{Link: "n1"},
+					},
+					"nil link": {
+						models.Word{Link: ""},
+					},
+				},
+			}
+			ctx := context.Background()
+			actual, err := uc.GetDetail(ctx, p.level, p.index)
+			assert.Equal(t, p.expect, actual)
+			assert.Equal(t, p.err, err)
+		})
+	}
+}
+
+func makeString(s string) *string {
+	return &s
 }
