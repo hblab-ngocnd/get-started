@@ -79,6 +79,66 @@ func Test_GetDict(t *testing.T) {
 			err: nil,
 		},
 		{
+			description: "success with notCache and start over size",
+			start:       8,
+			pageSize:    1,
+			notCache:    "true",
+			level:       "n1",
+			pwd:         "sync_pass",
+			newMockDictService: func(ctrl *gomock.Controller) services.DictionaryService {
+				mock := mock_services.NewMockDictionaryService(ctrl)
+				mock.EXPECT().GetDictionary(gomock.Any(), gomock.Eq("https://japanesetest4you.com/jlpt-n1-vocabulary-list/")).Return([]models.Word{
+					{},
+				}, nil)
+				return mock
+			},
+			newMockTranslateService: func(ctrl *gomock.Controller) services.TranslateService {
+				mock := mock_services.NewMockTranslateService(ctrl)
+				mock.EXPECT().TranslateData(gomock.Any(), gomock.Any()).Return([]models.Word{
+					{},
+				})
+				return mock
+			},
+			expect: []models.Word{},
+			err:    nil,
+		},
+		{
+			description: "Success with cache and start over sized",
+			start:       5,
+			pageSize:    8,
+			notCache:    "false",
+			level:       "n1",
+			pwd:         "sync_pass",
+			expect:      []models.Word{},
+			err:         nil,
+		},
+		{
+			description: "Success with cacheData is nil",
+			start:       0,
+			pageSize:    1,
+			notCache:    "true",
+			level:       "n1",
+			pwd:         "sync_pass",
+			newMockDictService: func(ctrl *gomock.Controller) services.DictionaryService {
+				mock := mock_services.NewMockDictionaryService(ctrl)
+				mock.EXPECT().GetDictionary(gomock.Any(), gomock.Eq("https://japanesetest4you.com/jlpt-n1-vocabulary-list/")).Return([]models.Word{
+					{}, {}, {}, {},
+				}, nil)
+				return mock
+			},
+			newMockTranslateService: func(ctrl *gomock.Controller) services.TranslateService {
+				mock := mock_services.NewMockTranslateService(ctrl)
+				mock.EXPECT().TranslateData(gomock.Any(), gomock.Any()).Return([]models.Word{
+					{}, {}, {}, {},
+				})
+				return mock
+			},
+			expect: []models.Word{
+				{},
+			},
+			err: nil,
+		},
+		{
 			description: "permission denied",
 			start:       0,
 			pageSize:    8,
@@ -121,17 +181,26 @@ func Test_GetDict(t *testing.T) {
 			if p.newMockDictService != nil {
 				mockTrans = p.newMockTranslateService(ctrl)
 			}
-			uc := dictUseCase{
-				dictionaryService: mockDict,
-				translateService:  mockTrans,
-				cacheData: map[string][]models.Word{
-					"n1": {
-						{},
-						{},
-						{},
-						{},
+			var uc dictUseCase
+			if p.notCache == "false" {
+				uc = dictUseCase{
+					dictionaryService: mockDict,
+					translateService:  mockTrans,
+					cacheData: map[string][]models.Word{
+						"n1": {
+							{},
+							{},
+							{},
+							{},
+						},
 					},
-				},
+				}
+			} else {
+				uc = dictUseCase{
+					dictionaryService: mockDict,
+					translateService:  mockTrans,
+					cacheData:         nil,
+				}
 			}
 			ctx := context.Background()
 			os.Setenv("SYNC_PASS", "sync_pass")
