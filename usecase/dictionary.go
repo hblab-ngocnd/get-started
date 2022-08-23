@@ -58,7 +58,8 @@ func (u *dictUseCase) GetDict(ctx context.Context, start, pageSize int, notCache
 	url := fmt.Sprintf("https://japanesetest4you.com/jlpt-%s-vocabulary-list/", level)
 	data, err := u.dictionaryService.GetDictionary(ctx, url)
 	if err != nil {
-		log.Fatal(err)
+		log.Print(err)
+		return nil, err
 	}
 	data = u.translateService.TranslateData(ctx, data)
 	if u.cacheData == nil {

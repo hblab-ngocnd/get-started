@@ -166,6 +166,27 @@ func Test_GetDict(t *testing.T) {
 			expect:      []models.Word{{}, {}, {}, {}},
 			err:         nil,
 		},
+		{
+			description: "Fail on GetDictionary",
+			start:       0,
+			pageSize:    1,
+			notCache:    "true",
+			level:       "n1",
+			pwd:         "sync_pass",
+			newMockDictService: func(ctrl *gomock.Controller) services.DictionaryService {
+				mock := mock_services.NewMockDictionaryService(ctrl)
+				mock.EXPECT().GetDictionary(gomock.Any(), gomock.Eq("https://japanesetest4you.com/jlpt-n1-vocabulary-list/")).Return([]models.Word{
+					{}, {}, {}, {},
+				}, InvalidErr)
+				return mock
+			},
+			newMockTranslateService: func(ctrl *gomock.Controller) services.TranslateService {
+				mock := mock_services.NewMockTranslateService(ctrl)
+				return mock
+			},
+			expect: nil,
+			err:    InvalidErr,
+		},
 	}
 
 	for i, p := range patterns {
