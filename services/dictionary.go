@@ -98,9 +98,11 @@ func (d *dictionaryService) GetDictionary(ctx context.Context, url string) ([]mo
 	}
 	return data, nil
 }
+
 func (d *dictionaryService) GetDetail(ctx context.Context, url string, i int) (string, error) {
 	return d.getDetail(ctx, url, i)
 }
+
 func (d *dictionaryService) getDetail(ctx context.Context, url string, i int) (string, error) {
 	log.Println("start with goroutine ", i)
 	defer log.Println("end with goroutine ", i)
