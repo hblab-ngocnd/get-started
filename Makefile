@@ -20,3 +20,7 @@ test:
 
 coverage.out:
 	go test -v -covermode=count -coverprofile=coverage.out ./...
+
+html_coverage.out:
+	go test -v -covermode=count -coverprofile=coverage.out ./...
+	go tool cover -html=coverage.out
